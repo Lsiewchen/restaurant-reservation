@@ -1,0 +1,14 @@
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+
+const Footer = () => {
+    return (
+        <Box sx={{ height:100, marginTop:8, display: 'flex', alignItems: 'center', bgcolor: '#F37021' }}>
+            <Typography sx={{ px: 20, display: 'flex', flexDirection: 'row', fontFamily: 'Momo Trust Sans', fontSize: 15, color:'#ffffff' }}>
+                ©2025 ChopChop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All Rights Reserved
+            </Typography>
+        </Box>
+    );
+}
+
+export default Footer
