@@ -1,6 +1,6 @@
-import {Fragment} from 'react'
-import Restaurants from './Restaurants.jsx'
-import NewRestaurants from './NewRestaurants.jsx'
+import Box from '@mui/material/Box';
+import Cuisine from './Cuisine.jsx'
+import New from './New.jsx'
 
 const restaurants = [
     {
@@ -163,11 +163,11 @@ const newRestaurants = [
 
 const Home = () => {
     return (
-        <Fragment>
-            <NewRestaurants newRests={newRestaurants} />
-            <Restaurants rests={restaurants} />
-            <Restaurants rests={restaurants} />
-        </Fragment>
+        <Box sx={{ py:5, bgcolor:'#FAFAFA' }}>
+            <New newRests={newRestaurants} />
+            <Cuisine rests={restaurants} />
+            <Cuisine rests={restaurants} />
+        </Box>
     )
 }
 

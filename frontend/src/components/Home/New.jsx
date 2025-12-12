@@ -3,6 +3,7 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import Typography from '@mui/material/Typography';
+import '@fontsource/montserrat/300';
 
 function srcset(image, size, rows = 1, cols = 1) {
   return {
@@ -13,27 +14,27 @@ function srcset(image, size, rows = 1, cols = 1) {
   };
 }
 
-const NewRestaurants = (props) => {
+const New = (props) => {
     const restListWithPos = [];
     restListWithPos[0] = props.newRests[0];
     restListWithPos[0].rows = 2;
     restListWithPos[0].cols = 3;
 
     return (
-        <Box sx={{ pt: 5, px: { xs: 2, sm: 5, md: 10, lg: 20 } }}>
-            <Typography sx={{ fontFamily: 'Momo Trust Sans', fontSize: 23 }}>New & Hot</Typography>
+        <Box sx={{ px: { xs: 2, sm: 5, md: 10, lg: 20 } }}>
+            <Typography sx={{ fontFamily: 'Montserrat', fontSize: 23 }}>New & Hot</Typography>
             <ImageList
             variant="quilted"
             cols={5}
             rowHeight={150}
-            padding-bottom={0}
             >
                 {props.newRests.map((rest) => (
-                    <ImageListItem key={rest.rtId} cols={rest.cols || 1} rows={rest.rows || 1}>
+                    <ImageListItem key={rest.rtId} cols={rest.cols || 1} rows={rest.rows || 1} sx={{ borderRadius: 2, overflow: 'hidden' }}>
                         <img
                             {...srcset(rest.restaurantImage, 100, rest.rows, rest.cols)}
                             alt={rest.name}
                             loading="lazy"
+                            style={{borderRadius:'inherit'}}
                         />
                         <ImageListItemBar
                         title={rest.name}
@@ -46,4 +47,4 @@ const NewRestaurants = (props) => {
     );
 }
 
-export default NewRestaurants
+export default New

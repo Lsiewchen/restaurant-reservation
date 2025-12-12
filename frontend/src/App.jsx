@@ -1,15 +1,30 @@
-import {Fragment} from 'react'
-import Header from './components/Header.jsx'
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Header from './components/Header/Header.jsx'
 import Footer from './components/Footer.jsx'
 import Home from './components/Home/Home.jsx'
+import Restaurant from './components/Restaurant/Restaurant.jsx'
+import Reservation from './components/Reservation/Reservation.jsx'
+
+const theme = createTheme ( {
+  typography: {
+    fontFamily: 'Montserrat'
+  }
+})
 
 function App() {
   return (
-    <Fragment>
+    <ThemeProvider theme={theme}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header/>
-      <Home/>
+      <Box sx={{ flexGrow: 1, bgcolor:'#F5F5F5', pt: '110px' }}>
+        {/* <Home/> */}
+        {/* <Restaurant/> */}
+        <Reservation/>
+      </Box>      
       <Footer/>
-    </Fragment>
+    </Box>
+    </ThemeProvider>
   )
 }
 
