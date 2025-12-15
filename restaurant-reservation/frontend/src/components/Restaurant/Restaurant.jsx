@@ -1,3 +1,4 @@
+import { useParams } from 'react-router';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import RestaurantGallery from './RestaurantGallery.jsx'
@@ -84,6 +85,8 @@ const restaurant =
 }
 
 const Restaurant = () => {
+  const params = useParams();
+  console.log(params);
     return (
         <Box sx={{ py:3, px: { xs: 2, sm: 5, md: 8, lg: 15 }, gap:2, display: 'flex', flexDirection: 'row' }}>
             <Stack spacing={2} sx={{ bgcolor:'#FFFFFF', py:3, px:3, width:'65%', borderRadius: 2 }}>

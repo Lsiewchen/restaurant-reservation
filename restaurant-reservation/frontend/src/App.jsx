@@ -1,3 +1,4 @@
+import { Routes, Route, Navigate } from "react-router";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Header from './components/Header/Header.jsx'
@@ -18,9 +19,12 @@ function App() {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header/>
       <Box sx={{ flexGrow: 1, bgcolor:'#F5F5F5', pt: '90px' }}>
-        {/* <Home/> */}
-        <Restaurant/>
-        {/* <Reservation/> */}
+        <Routes>
+          <Route path="/" element={<Navigate replace to="home" />} />
+          <Route path="home" element={<Home/>} />
+          <Route path="restaurant/:rtId" element={<Restaurant/>} />
+          <Route path="reservation" element={<Reservation/>} />
+        </Routes>
       </Box>      
       <Footer/>
     </Box>

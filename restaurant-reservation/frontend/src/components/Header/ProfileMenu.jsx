@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { Link } from "react-router";
+import { Fragment, useState } from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -16,7 +17,6 @@ const ProfileMenu = () => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
   };
 
   const menuId = 'primary-search-account-menu';
@@ -36,14 +36,14 @@ const ProfileMenu = () => {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
+      disableScrollLock
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem component={Link} to="/reservation">My reservations</MenuItem>
     </Menu>
   );
   
   return (
-    <Box sx={{ justifyContent: 'right' }}>
+    <Fragment>
       <IconButton
       size="large"
       edge="end"
@@ -52,11 +52,12 @@ const ProfileMenu = () => {
       aria-haspopup="true"
       onClick={handleProfileMenuOpen}
       color="inherit"
+      // sx={{mr:5}}
       >
         <AccountCircle sx={{ fontSize: 36, color: '#F37021' }} />
       </IconButton>
       {renderMenu}
-    </Box>
+    </Fragment>
   )
 }
 

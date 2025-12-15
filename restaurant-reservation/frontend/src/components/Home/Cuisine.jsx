@@ -7,7 +7,7 @@ const Cuisine = (props) => {
   return (
     <Box sx={{ py: 1, px: { xs: 2, sm: 5, md: 10, lg: 20 }, display: 'flex', flexDirection: 'column' }}>
       <Typography sx={{ py: 1, fontFamily: 'Montserrat', fontSize: 23 }}>{props.rests[0].cuisine}</Typography>
-      <Box sx={{ display: 'flex', overflowX: 'auto', gap: 0.5 }}>
+      <Box sx={{ display: 'flex', overflowX: 'auto', gap: 1 }}>
         {props.rests.map((rest) => (
           <Restaurant
           key = {rest.rtId}
