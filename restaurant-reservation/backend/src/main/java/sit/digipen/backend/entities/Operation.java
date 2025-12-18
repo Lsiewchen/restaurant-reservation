@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.IdClass;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,12 +27,11 @@ import sit.digipen.backend.entities.id.OperationId;
 public class Operation {
     @Id @Enumerated(EnumType.STRING)
     private Day day;
-    @JsonIgnore
-    @Id @ManyToOne @JoinColumn(name="rt_id")
+    @Id @ManyToOne @JoinColumn(name="rt_id") @JsonIgnore
     private Restaurant restaurant;
-    @Min(0) @Max(23)
+    @Min(0) @Max(23) @NotNull
     private int openingTime;
-    @Min(0) @Max(23)
+    @Min(0) @Max(23) @NotNull
     private int closingTime;
 
     public int getDay() {

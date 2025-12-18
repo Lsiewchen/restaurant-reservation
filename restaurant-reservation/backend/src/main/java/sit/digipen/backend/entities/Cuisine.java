@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,8 +20,8 @@ import java.util.List;
 public class Cuisine {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int csId;
+    @NotNull
     private String type;
-    @JsonIgnore
-    @ManyToMany(mappedBy = "cuisine")
+    @ManyToMany(mappedBy = "cuisine") @JsonIgnore @NotNull
     private List<Restaurant> restaurant;
 }

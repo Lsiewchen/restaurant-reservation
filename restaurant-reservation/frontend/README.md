@@ -1,16 +1,44 @@
-# React + Vite
+# Restaurant Reservation Backend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Table of Content
 
-Currently, two official plugins are available:
+- [Description](#description)
+- [Technology Used](#technology-used)
+- [Requirement](#requirements)
+- [Local Setup](#local-setup)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Description
 
-## React Compiler
+This frontend service supports restaurant reservations and provides the following features:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Browse restaurants by the 5 newest additions or by cuisine
+- Search restaurants by name or cuisine type
+- View detailed restaurant information, including menu, location, and operating hours
+- Make a reservation
+- View all reservations
+- Cancel reservations
 
-## Expanding the ESLint configuration
+## Technology Used
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- [React](https://react.dev/)
+- [React Router](https://reactrouter.com/)
+- [Axios](https://axios-http.com/)
+
+## Requirements
+
+- [Node.js v22.20.0](https://nodejs.org/en/download/)
+- [npm v11.6.2](https://www.npmjs.com/)
+
+## Local Setup
+
+Run the following codes in the terminal to set up the project.
+
+```
+
+# Step 1: Install dependencies
+npm install
+
+# Step 2: Run the application
+npm run dev
+
+```

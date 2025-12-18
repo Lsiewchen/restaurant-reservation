@@ -7,7 +7,7 @@ import Search from './Search.jsx';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-const initState = {restaurant:[], error:''};
+const initState = { restaurant: [], error: '' };
 
 const searchReduccerFunc = (prev, action) => {
   if (action.type === 'SEARCH_RESULT') {

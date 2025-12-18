@@ -11,6 +11,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,19 +26,27 @@ import java.util.List;
 public class Restaurant {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int rtId;
+    @NotNull
     private String name;
+    @NotNull
     private String email;
+    @NotNull
     private String phone;
+    @NotNull
     private String intro;
-    @Lob
+    @Lob @NotNull
     private String description;
+    @NotNull
     private int capacity;
+    @NotNull
     private String streetAddress1;
     @Column(nullable = true)
     private String streetAddress2;
     @Column(nullable = true)
     private String unitNumber;
+    @NotNull
     private String postalCode;
+    @NotNull
     private LocalDate dateCreated;
     @OneToMany(mappedBy = "restaurant")
     private List<Operation> operation;
@@ -46,9 +55,9 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant")
     private List<RestaurantMenu> restaurantMenu;
     @ManyToMany @JoinTable(name = "restaurant_cuisine",
-            joinColumns = @JoinColumn(name = "rt_id"), inverseJoinColumns = @JoinColumn(name = "cs_id"))
+            joinColumns = @JoinColumn(name = "rt_id"),
+            inverseJoinColumns = @JoinColumn(name = "cs_id"))
     private List<Cuisine> cuisine;
-    @JsonIgnore
-    @OneToMany(mappedBy = "restaurant")
+    @OneToMany(mappedBy = "restaurant") @JsonIgnore
     private List<Reservation> reservation;
 }

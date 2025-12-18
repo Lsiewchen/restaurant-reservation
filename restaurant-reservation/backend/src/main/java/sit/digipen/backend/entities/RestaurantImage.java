@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,10 +19,10 @@ import lombok.Setter;
 public class RestaurantImage {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int iId;
+    @NotNull
     private String imageUrl;
-    @JsonIgnore
-    @ManyToOne @JoinColumn(name="rt_id")
+    @ManyToOne @JoinColumn(name="rt_id") @JsonIgnore @NotNull
     private Restaurant restaurant;
-    @ManyToOne @JoinColumn(name="it_id")
+    @ManyToOne @JoinColumn(name="it_id") @NotNull
     private ImageType imageType;
 }

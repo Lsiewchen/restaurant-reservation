@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,12 +20,12 @@ import lombok.Setter;
 public class RestaurantMenu {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int mId;
+    @NotNull
     private String imageUrl;
+    @NotNull
     private String fileUrl;
     @Column(nullable = true)
     private String type;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name="rt_id")
+    @ManyToOne @JoinColumn(name="rt_id") @JsonIgnore @NotNull
     private Restaurant restaurant;
 }
