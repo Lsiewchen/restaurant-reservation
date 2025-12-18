@@ -43,6 +43,8 @@ public class Restaurant {
     private List<Operation> operation;
     @OneToMany(mappedBy = "restaurant")
     private List<RestaurantImage> restaurantImage;
+    @OneToMany(mappedBy = "restaurant")
+    private List<RestaurantMenu> restaurantMenu;
     @ManyToMany @JoinTable(name = "restaurant_cuisine",
             joinColumns = @JoinColumn(name = "rt_id"), inverseJoinColumns = @JoinColumn(name = "cs_id"))
     private List<Cuisine> cuisine;

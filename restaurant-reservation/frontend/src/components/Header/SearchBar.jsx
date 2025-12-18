@@ -1,4 +1,6 @@
-import { styled, alpha } from '@mui/material/styles';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -9,14 +11,10 @@ const Search = styled('div')(({ theme }) => ({
   '&:hover': {
     backgroundColor: '#f1efefff',
   },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  height: 28,
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
+  marginRight: 'auto',
+  marginLeft: 'auto',
+  width: '70%',
+  height: 28
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -39,7 +37,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
-    width: '80%',
+    width: '100%',
     height: '80%',
     color: '#383838ff',
     '::placeholder': {
@@ -50,12 +48,40 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const SearchBar = () => {
+  const [keyword, setKeyword] = useState('');
+  const searchInputRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.pathname.startsWith('/home/search/')) {
+      setKeyword('');
+    }
+  }, [location.pathname]);
+
+  const inPutChangeHandler = (event) => {
+    setKeyword(event.target.value);
+  };
+
+  const enterSearchHandler = (event) => {
+    if (event.key === 'Enter') {
+      navigate("/home/search/" + keyword);
+      if (searchInputRef.current) {
+        searchInputRef.current.blur();
+      }
+    }
+  };
+
   return (
     <Search sx={{ borderRadius: 5 }}>
       <SearchIconWrapper>
         <SearchIcon/>
       </SearchIconWrapper>
       <StyledInputBase
+        value={keyword}
+        inputRef={searchInputRef}
+        onChange={inPutChangeHandler}
+        onKeyDown={enterSearchHandler}
         placeholder="Search for something yummy"
         inputProps={{ 'aria-label': 'search' }}
       />

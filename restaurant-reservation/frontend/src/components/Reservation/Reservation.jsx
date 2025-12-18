@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from "axios";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ReservationDetails from './ReservationDetails.jsx';
 import Typography from '@mui/material/Typography';
@@ -13,59 +14,39 @@ import '@fontsource/montserrat/800';
 const theme = createTheme ({
   palette: {
     primary: {
-      main: "#F37021"
+      main: "#F37021",
     }
   }
 })
 
-const reservation = [
-  {
-    rsId: 1,
-    rtName: 'Restaurant1',
-    rtCoverImageUrl: 'https://static.chope.co/uploads/2017/11/s-700x350x70xw_HC_Crab_Holy_jpg_1510194779.jpg?date=20251013',
-    pax: 3,
-    date: 'nov20,2025',
-    time: 12,
-    customer: '',
-    restaurant: 1,
-    status: 'attended'
-  },
-  {
-    rsId: 2,
-    rtName: 'Restaurant2',
-    rtCoverImageUrl: 'https://static.chope.co/uploads/2017/11/s-700x350x70xw_HC_Crab_Holy_jpg_1510194779.jpg?date=20251013',
-    pax: 8,
-    date: 'dec31,2025',
-    time: 18,
-    customer: '',
-    restaurant: 1,
-    status: 'upcoming'
-  },
-    {
-    rsId: 3,
-    rtName: 'Restaurant3',
-    rtCoverImageUrl: 'https://static.chope.co/uploads/2017/11/s-700x350x70xw_HC_Crab_Holy_jpg_1510194779.jpg?date=20251013',
-    pax: 8,
-    date: 'dec25,2025',
-    time: 19,
-    customer: '',
-    restaurant: 1,
-    status: 'upcoming'
-  }
-]
-
 const Reservation = () => {
-
   const [tab, setTab] = useState('Upcoming');
+  const [activeReservation, setActiveReservation] = useState([]);
+  const [inactiveReservation, setInactiveReservation] = useState([]);
+  const [cancelCount, setCancelCount] = useState(0);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/reservation/all")
+    .then((response) => {
+      let reservation = response.data;
+      const active = reservation.filter((rs) => (rs.statusType == "active"));
+      setActiveReservation(active);
+      const inactive = reservation.filter((rs) => (rs.statusType != "active" && rs.statusType != "canceled"));
+      setInactiveReservation(inactive);
+    })
+    .catch((e) => { console.log("Failed to load reservation."); })
+  }, [cancelCount]);
 
   const handleChange = (event, newValue) => {
     setTab(newValue);
   };
 
+  const cancelReservation = () => (setCancelCount(prev => prev + 1));
+
   return (
     <Stack direction="column" sx={{ justifyContent:"flex-start", alignItems:"center" }}>
       <ThemeProvider theme={theme}>
-      <Typography sx={{ py:2, fontWeight:'bold', fontSize:20 }}>Reservation</Typography>
+      <Typography sx={{ py:2, fontFamily:'Montserrat', fontWeight:'bold', fontSize:24 }}>Reservation</Typography>
       <Box sx={{ typography: 'body1', px:1, py:1, width:{xs:600, sm:700}, borderRadius:3, bgcolor:'#FFFFFF' }}>
         <TabContext value={tab}>
           <Box sx={{ display:'flex' }}>
@@ -75,18 +56,24 @@ const Reservation = () => {
             </TabList>
             <Box sx={{width:'85%'}}>
               <TabPanel value="Upcoming" sx={{ py:0.5 }}>
-                <Stack direction="column" spacing={1} sx={{ px:1, py:1, width:'100%', borderRadius:3, bgcolor:'#FFFFFF' }}>
-                  {reservation.filter(rs => rs.status === 'upcoming').map((rs) => (
-                    <ReservationDetails key={rs.rsId} reservation={rs} attended={false}/>
-                  ))}
-              </Stack>
+                {activeReservation.length > 0 ?
+                  <Stack direction="column" spacing={1} sx={{ px:1, py:1, width:'100%', borderRadius:3, bgcolor:'#FFFFFF' }}>
+                    {activeReservation.map((rs) => (
+                      <ReservationDetails key={rs.rsId} reservation={rs} attended={false} cancelReservation={cancelReservation}/>
+                    ))}
+                  </Stack>
+                  : <Typography align="center" sx={{ fontFamily:'Montserrat', color:'#909090ff' }}>You have no upcoming reservations.</Typography>
+                }
               </TabPanel>
               <TabPanel value="Past" sx={{ py:0.5 }}>
-                <Stack direction="column" spacing={1} sx={{ px:1, py:1, width:'100%', borderRadius:3, bgcolor:'#FFFFFF', opacity: 0.5 }}>
-                  {reservation.filter(rs => rs.status === 'attended').map((rs) => (
-                    <ReservationDetails key={rs.rsId} reservation={rs} attended={true}/>
-                  ))}
-                </Stack>
+                {inactiveReservation.length > 0 ?
+                  <Stack direction="column" spacing={1} sx={{ px:1, py:1, width:'100%', borderRadius:3, bgcolor:'#FFFFFF', opacity: 0.5 }}>
+                    {inactiveReservation.map((rs) => (
+                      <ReservationDetails key={rs.rsId} reservation={rs} attended={true}/>
+                    ))}
+                  </Stack>
+                  : <Typography align="center" sx={{ fontFamily:'Montserrat', color:'#909090ff' }}>You have no past reservations.</Typography>
+                }
               </TabPanel>
             </Box>
           </Box>

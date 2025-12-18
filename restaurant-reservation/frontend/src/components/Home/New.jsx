@@ -15,33 +15,29 @@ function srcset(image, size, rows = 1, cols = 1) {
   };
 }
 
-const New = (props) => {
-  const restListWithPos = [];
-  restListWithPos[0] = props.newRests[0];
-  restListWithPos[0].rows = 2;
-  restListWithPos[0].cols = 2;
+const New = ({restNew}) => {
+  const restListWithPos = restNew.map((rest, index) => 
+    index == 0 ? {...rest, rows:2, cols:2} : rest
+  );
 
   return (
-    <Box sx={{ px: { xs: 2, sm: 5, md: 10, lg: 20 } }}>
-      <Typography sx={{ fontFamily: "Montserrat", fontSize: 23 }}>New & Hot</Typography>
+    <Box sx={{ pt:1, px: { xs: 2, sm: 5, md: 10, lg: 20, xl:40 } }}>
+      <Typography sx={{ fontFamily: "Montserrat", fontSize: 23, py:1 }}>New & Hot</Typography>
       <ImageList variant="quilted" cols={4} rowHeight={150} gap={7}>
-        {props.newRests.map((rest) => (
-            <ImageListItem
-              key={rest.rtId}
-              cols={rest.cols || 1}
-              rows={rest.rows || 1}
-              sx={{ borderRadius: 2, overflow: "hidden" }}
-              component={Link} to={`/restaurant/${rest.rtId}`}
-            >
-              <img
-                {...srcset(rest.restaurantImage, 100, rest.rows, rest.cols)}
-                alt={rest.name}
-                loading="lazy"
-                style={{ borderRadius: "inherit", display: 'block', height: '100%', width: '100%', objectFit: 'cover', objectPosition:'center' }}
-              />
-              <ImageListItemBar title={rest.name} subtitle={rest.description} />
-            </ImageListItem>
-          
+        {restListWithPos.map((rt) => (
+          <ImageListItem key={rt.rtId} component={Link} to={`/restaurant/${rt.rtId}`}
+          cols={rt.cols || 1} rows={rt.rows || 1} sx={{ borderRadius: 2, overflow: "hidden" }}
+          >
+            <img {...srcset(rt.imageUrl, 100, rt.rows, rt.cols)}
+            alt={rt.name}
+            loading="lazy"
+            style={{ borderRadius: "inherit", display: 'block', height: '100%', width: '100%', objectFit: 'cover', objectPosition:'center' }}
+            />
+            <ImageListItemBar title={rt.name} subtitle={rt.intro}
+            sx={{ '&:hover .MuiImageListItemBar-title':{ whiteSpace: 'normal', overflow: 'visible' },
+                  '&:hover .MuiImageListItemBar-subtitle':{ whiteSpace: 'normal', overflow: 'visible', } }}  
+            />
+          </ImageListItem>
         ))}
       </ImageList>
     </Box>

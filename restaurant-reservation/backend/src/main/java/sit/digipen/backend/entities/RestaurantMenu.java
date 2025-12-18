@@ -1,38 +1,30 @@
 package sit.digipen.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-public class Reservation {
+public class RestaurantMenu {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int rsId;
-    private int pax;
-    private LocalDate date;
-    @Min(0) @Max(23)
-    private int time;
+    private int mId;
+    private String imageUrl;
+    private String fileUrl;
+    @Column(nullable = true)
+    private String type;
     @JsonIgnore
-    @ManyToOne @JoinColumn(name = "rt_id")
+    @ManyToOne
+    @JoinColumn(name="rt_id")
     private Restaurant restaurant;
-    @JsonIgnore
-    @ManyToOne @JoinColumn(name = "c_id")
-    private Customer customer;
-    @JsonIgnore
-    @ManyToOne @JoinColumn(name = "s_id")
-    private Status status;
 }

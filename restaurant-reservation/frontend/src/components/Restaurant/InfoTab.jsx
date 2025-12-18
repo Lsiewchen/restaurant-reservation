@@ -27,26 +27,26 @@ const theme = createTheme ( {
 })
 
 const InfoTab = ({restaurant}) => {
-    const [tab, setTab] = React.useState('About');
+  const [tab, setTab] = React.useState('About');
 
-    const handleChange = (event, newValue) => {
-        setTab(newValue);
-    };
+  const handleChange = (event, newValue) => {
+    setTab(newValue);
+  };
 
-    return (
-        <Box sx={{ borderRadius: 2 }}>
-            <TabContext value={tab}>
-                <ThemeProvider theme={theme}>
-                <TabList onChange={handleChange} variant="fullWidth" textColor='primary' indicatorColor='primary'>
-                    <Tab label='About' value='About'/>
-                    <Tab label='Menu' value='Menu'/>
-                </TabList>
-                </ThemeProvider>
-                <TabPanel value="About" sx={{ p: 0, py: 3 }}><About restaurant={restaurant}/></TabPanel>
-                <TabPanel value="Menu" sx={{ p: 0, py: 3 }}><Menu restaurant={restaurant}/></TabPanel>
-            </TabContext>
-        </Box>
-    )
+  return (
+    <Box sx={{ borderRadius: 2 }}>
+      <TabContext value={tab}>
+        <ThemeProvider theme={theme}>
+        <TabList onChange={handleChange} variant="fullWidth" textColor='primary' indicatorColor='primary'>
+          <Tab label='About' value='About'/>
+          <Tab label='Menu' value='Menu'/>
+        </TabList>
+        </ThemeProvider>
+        <TabPanel value="About" sx={{ p: 0, py: 3 }}><About restaurant={restaurant}/></TabPanel>
+        <TabPanel value="Menu" sx={{ p: 0, py: 3 }}><Menu restaurant={restaurant}/></TabPanel>
+      </TabContext>
+    </Box>
+  )
 }
 
 export default InfoTab

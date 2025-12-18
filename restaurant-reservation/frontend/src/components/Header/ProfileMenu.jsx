@@ -38,7 +38,7 @@ const ProfileMenu = () => {
       onClose={handleMenuClose}
       disableScrollLock
     >
-      <MenuItem component={Link} to="/reservation">My reservations</MenuItem>
+      <MenuItem component={Link} to="/reservation" onClick={handleMenuClose}>My reservations</MenuItem>
     </Menu>
   );
   

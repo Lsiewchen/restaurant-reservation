@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
+import axios from "axios";
+import toast from 'react-hot-toast';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Select from '@mui/material/Select';
@@ -45,83 +47,143 @@ const theme = createTheme({
       },
     },
   },
-})
+});
+
+const paxInitState =  { pax: '', isEmpty: null };
+const paxReducerFunc = (prevState, action) => {
+  if (action.type === 'PAX_SELECTED') {
+    return { pax: action.val, isEmpty: false };
+  }
+  if (action.type === 'PAX_FIELD_VALIDATE') {
+    return { pax: prevState.pax, isEmpty: prevState.pax === '' };
+  }
+  if (action.type === 'PAX_RESET') {
+    return { pax: '', isEmpty: null };
+  }
+};
+
+const dateInitState = { date: null, isEmpty: null };
+const dateReducerFunc = (prevState, action) => {
+  if (action.type === 'DATE_FIELD_SELECTED') {
+    return { date: action.val, isEmpty: false };
+  }
+  if (action.type === 'DATE_FIELD_VALIDATE') {
+    return { date: prevState.date, isEmpty: prevState.date === null ? true : prevState.isEmpty };
+  }
+  if (action.type === 'DATE_RESET') {
+    return { date: null, isEmpty: null };
+  }
+};
+
+const timeInitState = { time: '', isEmpty: null };
+const timeReducerFunc = (prevState, action) => {
+  if (action.type === 'TIME_FIELD_SELECTED') {
+    return { time: action.val, isEmpty: false };
+  }
+  if (action.type === 'TIME_FIELD_VALIDATE') {
+    return { time: prevState.time, isEmpty: prevState.time === '' ? true : prevState.isEmpty };
+  }
+  if (action.type === 'TIME_RESET') {
+    return { time: '', isEmpty: null };
+  }
+};
 
 const ReservationForm = ({restaurant}) => {
-  const [numPax, setNumPax] = useState('');
-  const [numPaxIsEmpty, setNumPaxIsEmpty] = useState(null);
-  const [reservationDate, setReservationDate] = useState(null);
-  const [reservationDateIsEmpty, setReservationDateIsEmpty] = useState(null);
-  const [reservationTime, setReservationTime] = useState('');
-  const [reservationTimeIsEmpty, setReservationTimeIsEmpty] = useState(null);
-  const [reservationTimeArray, setReservationTimeArray] = useState([]);
+  const [paxState, dispatchPax] = useReducer(paxReducerFunc, paxInitState);
+  const [dateState, dispatchDate] = useReducer(dateReducerFunc, dateInitState);
+  const [timeState, dispatchTime] = useReducer(timeReducerFunc, timeInitState);
+  const [timeArray, setTimeArray] = useState([]);
 
   const numPaxChangeHandler = (event) => (
-    setNumPax(event.target.value)
+    dispatchPax({ type: 'PAX_SELECTED', val: event.target.value })
   );
 
-  useEffect(() => {
-    setNumPaxIsEmpty(false)
-  }, [numPax])
-
-  const numPaxValidate = () => {
-    numPax === '' ? setNumPaxIsEmpty(true) : setNumPaxIsEmpty(false);
-  };
+  const numPaxValidate = () => (
+    dispatchPax({ type: 'PAX_FIELD_VALIDATE' })
+  );
 
   const dateChangeHandler = (value) => (
-    setReservationDate(value)
+    dispatchDate({ type: 'DATE_FIELD_SELECTED', val: value})
   );
 
-  useEffect(() => {
-    setReservationDateIsEmpty(false)
-  }, [reservationDate]);
-
   const dateValidate = () => (
-    reservationDate == null && setReservationDateIsEmpty(true)
+    dispatchDate({ type: 'DATE_FIELD_VALIDATE' })
   );
 
   const timeChangeHandler = (event) => (
-    setReservationTime(event.target.value)
+    dispatchTime({ type: 'TIME_FIELD_SELECTED', val: event.target.value })
   );
 
-  useEffect(() => {
-    setReservationTimeIsEmpty(false)
-  }, [reservationTime]);
-
   const timeValidate = () => (
-    reservationTime == null && setReservationTimeIsEmpty(true)
+    dispatchTime({ type: 'TIME_FIELD_VALIDATE' })
   );
 
   const formSubmitHandler = (event) => {
     event.preventDefault();
+    numPaxValidate();
+    dateValidate();
+    timeValidate();
+
+    let dateString;
+    if (!dateState.isEmpty) {
+      dateString = dayjs(dateState.date).format('YYYY-MM-DD');
+    }
+   
     let reservationTime24;
-    let hour = parseInt(reservationTime.split(" ")[0]);
-    let ampm = reservationTime.split(" ")[1];
-    if (ampm == "AM") {
-      if (hour == 12) { reservationTime24 = 0; }
-      else { reservationTime24 = hour; }
+    if (!timeState.isEmpty) {
+      let hour = parseInt(timeState.time.split(" ")[0]);
+      let ampm = timeState.time.split(" ")[1];
+      if (ampm == "AM") {
+        if (hour == 12) { reservationTime24 = 0; }
+        else { reservationTime24 = hour; }
+      }
+      else if (ampm == "PM") {
+        if (hour == 12) { reservationTime24 = hour; }
+        else { reservationTime24 = hour + 12; }
+      }
     }
-    else if (ampm == "PM") {
-      if (hour == 12) { reservationTime24 = hour; }
-      else { reservationTime24 = hour + 12; }
-    }
-    if (numPaxIsEmpty != true && reservationDateIsEmpty != true && reservationTimeIsEmpty === false) {
-      console.log(numPax);
-      console.log(reservationDate);
-      console.log(reservationTime24);
+    
+    if (!paxState.isEmpty && dateString != undefined && reservationTime24 != undefined) {
+      const reservation = {
+        "rtId": restaurant.rtId,
+        "pax": paxState.pax,
+        "date": dateString,
+        "time": reservationTime24
+      }
+      axios.post("http://localhost:8080/reservation/create", reservation)
+      .then((response) => {
+        dispatchPax({ type: 'PAX_RESET' });
+        dispatchDate({ type: 'DATE_RESET' });
+        dispatchTime({ type: 'TIME_RESET' });
+        toast.success(response.data);
+      })
+      .catch((e) => {
+        toast.error(e.response.data, {style: { maxWidth:500, width:500 }})
+      })
     }
   }
 
-  //creates an array of 'length' and mapped (callback(element, index, array)) it, we need index so element must be ignored 
+//generate pax with a range of 1-10
+//creates an array of 'length' and mapped (callback(element, index, array)) it, we need index so element must be ignored 
   const capacityArray = Array.from({length: 10}, (_, i) => ({label: i + 1, value: i + 1}));
 
+//generate day to block out based on operation day
+  const dayNotOperating = () => {
+    const allDays = [0, 1, 2, 3, 4, 5, 6];
+    const operationDays = restaurant.operation.map(op => op.day);
+    const dayNotOperating = allDays.filter((day) => (!operationDays.includes(day)));
+    return dayNotOperating;
+  }
+  
+//generate time based on day  
   useEffect(() => {
-    if (reservationDate == null) { return; }
+    if (dateState.date == null) { return; }
     let time = new Array();
     let operation = restaurant.operation.filter(op => 
-      op.day === dayjs(reservationDate).day()
+      op.day === dayjs(dateState.date).day()
     );
-    for (let i = operation[0].openingTime; i < operation[0].closingTime; i++) {
+    let closingTime = operation[0].closingTime == 0 ? 24 : operation[0].closingTime;
+    for (let i = operation[0].openingTime; i < closingTime; i++) {
       if (i < 12) {
         i == 0 ? time.push(12 + ' AM') : time.push(i + ' AM');
       }
@@ -129,57 +191,61 @@ const ReservationForm = ({restaurant}) => {
         i == 12 ? time.push((i) + ' PM') : time.push((i-12) + ' PM');
       }
     }
-    setReservationTimeArray(time);
-  }, [reservationDate]);
+    setTimeArray(time);
+  }, [dateState.date]);
   
   return (
     <ThemeProvider theme={theme}>
     <Box component="form" onSubmit={formSubmitHandler}
-    sx={{ py:3, px:3, borderRadius:2, bgcolor:'#FFFFFF', display:'flex', flexDirection:'column', alignItems:'center', position:'sticky', top:130 }}>
+    sx={{ py:3, px:3, borderRadius:2, bgcolor:'#FFFFFF', display:'flex', flexDirection:'column', alignItems:'center', position:'sticky', top:90 }}>
       <Typography sx={{ width:'90%', height:56, fontSize:20, fontWeight:'medium', mb:{xs:2, sm:2, md:0} }}>Make a reservation</Typography>
+{/* pax */}
       <FormControl sx={{ mb:2, width:'90%' }} >
-        <InputLabel id="labelNumPax" sx={{color: numPaxIsEmpty && '#F37021'}}>Number of pax</InputLabel>
+        <InputLabel id="labelNumPax" sx={{color: paxState.isEmpty && '#F37021'}}>Number of pax</InputLabel>
         <Select labelId="labelNumPax" label="Number of pax"
-        value={numPax} onClose={numPaxValidate} onChange={numPaxChangeHandler}
+        value={paxState.pax} onClose={numPaxValidate} onChange={numPaxChangeHandler}
         IconComponent={EmojiPeopleIcon}
         sx={{'& .MuiSelect-icon': {transform: 'none', mr:0.5, color:'black'}, 
-        '& .MuiOutlinedInput-notchedOutline': {borderColor: numPaxIsEmpty && '#F37021'}}}
+        '& .MuiOutlinedInput-notchedOutline': {borderColor: paxState.isEmpty && '#F37021'} }}
         >
           {capacityArray.map((option) => (
             <MenuItem key={option.value} value={option.value}> {option.label} </MenuItem>
           ))}
         </Select>
-        {numPaxIsEmpty && <FormHelperText sx={{ color:'#F37021' }}>This field is required.</FormHelperText>}
+        {paxState.isEmpty && <FormHelperText sx={{ color:'#F37021' }}>This field is required.<br/>*Over 10 guests? Contact the restaurant.</FormHelperText>}
       </FormControl>
+{/* date */}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DesktopDatePicker label="Date" format="DD/MM/YYYY" views={['year', 'month', 'day']}
-        minDate={dayjs()} maxDate={dayjs().add(6, 'month')} // shouldDisableDate={(date) => date.day() === 0}
-        value={reservationDate} onClose={dateValidate} onChange={dateChangeHandler}
+        minDate={dayjs()} maxDate={dayjs().add(6, 'month')} shouldDisableDate={(date) => dayNotOperating().includes(date.day())}
+        value={dateState.date} onClose={dateValidate} onChange={dateChangeHandler}
         sx={{ width:'90%', mb:2, '& .MuiSelect-icon':{color:'black'} }} formatDensity="spacious"
         slotProps={{ 
           textField: {
             onKeyDown: (e) => e.preventDefault(),
-            error: reservationDateIsEmpty,
-            helperText: reservationDateIsEmpty && 'This field is required.',
+            error: dateState.isEmpty,
+            helperText: dateState.isEmpty && 'This field is required.',
             FormHelperTextProps: {sx: {color: '#F37021' }}
           },
           popper: { placement: "auto" }
         }}
         />
       </LocalizationProvider>
+{/* time */}
       <FormControl sx={{ mb:2, width:'90%' }} >
-        <InputLabel id="labelTime" sx={{ color: reservationTimeIsEmpty && '#F37021' }}>Time</InputLabel>
-        <Select labelId="labelTime" label="Time" disabled={reservationDate == null}
-        value={reservationTime} onClose={timeValidate} onChange={timeChangeHandler}
+        <InputLabel id="labelTime" sx={{ color: timeState.isEmpty && '#F37021' }}>Time</InputLabel>
+        <Select labelId="labelTime" label="Time" disabled={dateState.date == null}
+        value={timeState.time} onClose={timeValidate} onChange={timeChangeHandler}
         IconComponent={ScheduleIcon}
         sx={{ '& .MuiSelect-icon': {transform: 'none', mr:0.5, color:'black'},
-        '& .MuiOutlinedInput-notchedOutline': {borderColor: reservationTimeIsEmpty && '#F37021'} }}
+        '& .MuiOutlinedInput-notchedOutline': {borderColor: timeState.isEmpty && '#F37021'},
+        '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {borderColor: timeState.isEmpty && '#F37021'} }}
         >
-          {reservationTimeArray.map((option) => (
+          {timeArray.map((option) => (
             <MenuItem key={option} value={option}> {option} </MenuItem>
           ))}
         </Select>
-        {reservationTimeIsEmpty && <FormHelperText sx={{color:'#F37021'}}>This field is required.</FormHelperText>}
+        {timeState.isEmpty && <FormHelperText sx={{color:'#F37021'}}>This field is required.</FormHelperText>}
       </FormControl>
       <Button sx={{ width:'90%', height:56, fontWeight:'bold', fontSize:16, backgroundColor:'#2cb2c71d',
       '&:hover': { backgroundColor: '#0099c8d4', color: '#ffffff'} }} type="submit">Book Now</Button>

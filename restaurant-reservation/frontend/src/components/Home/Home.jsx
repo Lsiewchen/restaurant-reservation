@@ -1,174 +1,79 @@
+import { Fragment, useState, useEffect, useReducer } from 'react';
+import { useParams } from 'react-router';
+import axios from "axios";
+import Cuisine from './Cuisine.jsx';
+import New from './New.jsx';
+import Search from './Search.jsx';
+import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Cuisine from './Cuisine.jsx'
-import New from './New.jsx'
 
-const restaurants = [
-    {
-        rtId: 1,
-        name: 'Restaurant1',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'feb1,2025'
-    },
-    {
-        rtId: 2,
-        name: 'Restaurant2',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'jan1,2025'
-    },
-    {
-        rtId: 3,
-        name: 'Restaurant3',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'apr1,2025'
-    },
-    {
-        rtId: 4,
-        name: 'Restaurant4',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'mar1,2025'
-    }
-]
+const initState = {restaurant:[], error:''};
 
-const newRestaurants = [
-        {
-        rtId: 1,
-        name: 'Restaurant1',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'feb1,2025'
-    },
-    {
-        rtId: 2,
-        name: 'Restaurant2',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'jan1,2025'
-    },
-    {
-        rtId: 3,
-        name: 'Restaurant3',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'apr1,2025'
-    },
-    {
-        rtId: 4,
-        name: 'Restaurant4',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'apr1,2025'
-    },
-    {
-        rtId: 5,
-        name: 'Restaurant5',
-        email: 'abc@gmail.com',
-        phone: '87654321',
-        intro: 'Michellin food',
-        description: 'The best food...',
-        capacity: 100,
-        streetAddress: '65 Street',
-        unitNumber: '01-05',
-        postalCode: '050065',
-        restaurantImage: 'https://static.chope.co/uploads/2025/10/s-700x350x70xw_4-1760502537.jpg?date=20251013',
-        operation: "",
-        cuisine: 'French',
-        reservation: '',
-        dateCreated: 'apr1,2025'
-    }
-]
-
-const Home = () => {
-    return (
-        <Box sx={{ py:5, bgcolor:'#FAFAFA' }}>
-            <New newRests={newRestaurants} />
-            <Cuisine rests={restaurants} />
-            <Cuisine rests={restaurants} />
-        </Box>
-    )
+const searchReduccerFunc = (prev, action) => {
+  if (action.type === 'SEARCH_RESULT') {
+    return { restaurant: action.val, error: '' };
+  }
+  if (action.type === 'NO_RESULT') {
+    return { restaurant: [], error: action.val };
+  }
+  if (action.type === 'NO_SEARCH') {
+    return { restaurant: [], error: '' }
+  }
 }
 
-export default Home;
+const Home = () => {
+  const [restCuis, setRestCuis] = useState(null);
+  const [restNew, setRestNew] = useState([]);
+  const [searchState, dispatchSearch] = useReducer(searchReduccerFunc, initState);
+  const {keyword} = useParams();
+
+  useEffect(() => {
+    if (keyword != undefined) {
+      axios.get(`http://localhost:8080/restaurant/search/${keyword}`)
+      .then((response) => { dispatchSearch({ type: 'SEARCH_RESULT', val: response.data }) })
+      .catch((e) => { dispatchSearch({ type: 'NO_RESULT', val: e.response.data }) });
+    }
+    else {
+      dispatchSearch({ type: 'NO_SEARCH' })
+    }
+  }, [keyword]);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/restaurant/cuisine")
+    .then((response) => { setRestCuis(response.data); })
+    .catch((e) => { console.log(e.response.data); });
+  }, []);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/restaurant/new")
+    .then((response) => { setRestNew(response.data); })
+    .catch((e) => { console.log(e.response.data); });
+  }, []);
+
+  return (
+    <Box sx={{ py:3, pb:5, width:'100%', height:'100%' }}>
+      {searchState.restaurant.length > 0 ?
+        <Search restMatch={searchState.restaurant}/>
+        :
+        <Fragment>
+        {searchState.error != '' && 
+          <Typography align="center" sx={{py:2, my:3, mx: { xs: 2, sm: 5, md: 10, lg: 20, xl:40 }, borderStyle:'solid', borderColor:'#c4c4c4ff'}}>{searchState.error}</Typography>
+        }
+        {restCuis != null && restNew.length > 0 && (
+          <Fragment>
+            <New restNew={restNew} />
+            {Object.entries(restCuis).map(([cuis, rest]) => (
+              <Box key={cuis} sx={{ py: 1, px: { xs: 2, sm: 5, md: 10, lg: 20, xl:40 }, display: 'flex', flexDirection: 'column' }}>
+                <Typography sx={{ py: 1, fontFamily: 'Montserrat', fontSize: 23 }}>{cuis}</Typography>
+                <Cuisine rest={rest} />
+              </Box>
+            ))}
+          </Fragment>
+        )}
+        </Fragment>
+      }
+    </Box>
+  )
+}
+
+export default Home

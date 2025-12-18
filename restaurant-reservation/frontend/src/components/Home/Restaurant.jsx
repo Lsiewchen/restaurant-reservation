@@ -1,19 +1,23 @@
+import { Link } from "react-router";
 import Box from '@mui/system/Box';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 
-const Restaurant = (props) => {
+const Restaurant = ({rest}) => {
   return (
     <Box sx={{ flex: "0 0 auto", width: 280 }}>
-      <ImageListItem sx={{ borderRadius: 2, overflow: "hidden" }}>
+      <ImageListItem sx={{ borderRadius: 2, overflow: "hidden" }} component={Link} to={`/restaurant/${rest.rtId}`}>
         <img
-          srcSet={`${props.image}?w=248&fit=crop&auto=format&dpr=2 2x`}
-          src={`${props.image}?w=248&fit=crop&auto=format`}
-          alt={props.name}
+          srcSet={`${rest.imageUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
+          src={`${rest.imageUrl}?w=248&fit=crop&auto=format`}
+          alt={rest.name}
           loading="lazy"
           style={{ height:180, borderRadius: "inherit", objectFit: 'cover', objectPosition:'center' }}
         />
-        <ImageListItemBar title={props.name} subtitle={props.description} />
+        <ImageListItemBar title={rest.name} subtitle={rest.intro} 
+        sx={{ '&:hover .MuiImageListItemBar-title':{ whiteSpace: 'normal', overflow: 'visible' },
+              '&:hover .MuiImageListItemBar-subtitle':{ whiteSpace: 'normal', overflow: 'visible', } }}
+        />
       </ImageListItem>
     </Box>
   );
