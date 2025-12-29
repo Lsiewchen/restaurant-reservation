@@ -16,6 +16,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import dayjs from 'dayjs';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 
 const theme = createTheme({
   typography: {
@@ -55,7 +56,7 @@ const paxReducerFunc = (prevState, action) => {
     return { pax: action.val, isEmpty: false };
   }
   if (action.type === 'PAX_FIELD_VALIDATE') {
-    return { pax: prevState.pax, isEmpty: prevState.pax === '' };
+    return { pax: prevState.pax, isEmpty: prevState.pax === '' ? true : prevState.isEmpty };
   }
   if (action.type === 'PAX_RESET') {
     return { pax: '', isEmpty: null };
@@ -93,6 +94,7 @@ const ReservationForm = ({restaurant}) => {
   const [dateState, dispatchDate] = useReducer(dateReducerFunc, dateInitState);
   const [timeState, dispatchTime] = useReducer(timeReducerFunc, timeInitState);
   const [timeArray, setTimeArray] = useState([]);
+  const [timeTooltip, setTimeTooltip] = useState('Please select a date.');
 
   const numPaxChangeHandler = (event) => (
     dispatchPax({ type: 'PAX_SELECTED', val: event.target.value })
@@ -143,7 +145,7 @@ const ReservationForm = ({restaurant}) => {
       }
     }
     
-    if (!paxState.isEmpty && dateString != undefined && reservationTime24 != undefined) {
+    if (!paxState.isEmpty && paxState.isEmpty != null && dateString != undefined && reservationTime24 != undefined) {
       const reservation = {
         "rtId": restaurant.rtId,
         "pax": paxState.pax,
@@ -155,11 +157,10 @@ const ReservationForm = ({restaurant}) => {
         dispatchPax({ type: 'PAX_RESET' });
         dispatchDate({ type: 'DATE_RESET' });
         dispatchTime({ type: 'TIME_RESET' });
+        setTimeTooltip('Please select a date.');
         toast.success(response.data);
       })
-      .catch((e) => {
-        toast.error(e.response.data, {style: { maxWidth:500, width:500 }})
-      })
+      .catch((e) => { toast.error(e.response.data, {style: { maxWidth:500, width:500 }}); })
     }
   }
 
@@ -182,8 +183,9 @@ const ReservationForm = ({restaurant}) => {
     let operation = restaurant.operation.filter(op => 
       op.day === dayjs(dateState.date).day()
     );
+    let openingTime = dayjs(dateState.date).isSame(dayjs(), 'day') ? dayjs().add(1, 'hour').format('H') : operation[0].openingTime;
     let closingTime = operation[0].closingTime == 0 ? 24 : operation[0].closingTime;
-    for (let i = operation[0].openingTime; i < closingTime; i++) {
+    for (let i = openingTime; i < closingTime; i++) {
       if (i < 12) {
         i == 0 ? time.push(12 + ' AM') : time.push(i + ' AM');
       }
@@ -193,6 +195,12 @@ const ReservationForm = ({restaurant}) => {
     }
     setTimeArray(time);
   }, [dateState.date]);
+
+//time tooltip
+  useEffect(() => {
+    if (dateState.date == null) { return; }
+    setTimeTooltip(null);
+  }, [dateState.date])
   
   return (
     <ThemeProvider theme={theme}>
@@ -232,6 +240,7 @@ const ReservationForm = ({restaurant}) => {
         />
       </LocalizationProvider>
 {/* time */}
+      <Tooltip title={timeTooltip} placement="right-start">  
       <FormControl sx={{ mb:2, width:'90%' }} >
         <InputLabel id="labelTime" sx={{ color: timeState.isEmpty && '#F37021' }}>Time</InputLabel>
         <Select labelId="labelTime" label="Time" disabled={dateState.date == null}
@@ -247,6 +256,7 @@ const ReservationForm = ({restaurant}) => {
         </Select>
         {timeState.isEmpty && <FormHelperText sx={{color:'#F37021'}}>This field is required.</FormHelperText>}
       </FormControl>
+      </Tooltip>
       <Button sx={{ width:'90%', height:56, fontWeight:'bold', fontSize:16, backgroundColor:'#2cb2c71d',
       '&:hover': { backgroundColor: '#0099c8d4', color: '#ffffff'} }} type="submit">Book Now</Button>
     </Box>

@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import SearchContext from '../../store/search-context.jsx'
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -48,24 +49,20 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const SearchBar = () => {
-  const [keyword, setKeyword] = useState('');
   const searchInputRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!location.pathname.startsWith('/home/search/')) {
-      setKeyword('');
-    }
-  }, [location.pathname]);
+  const cxt = useContext(SearchContext);
 
   const inPutChangeHandler = (event) => {
-    setKeyword(event.target.value);
+    console.log(event.target.value);
+    cxt.setKeyword(event.target.value);
   };
 
   const enterSearchHandler = (event) => {
+    // const trimedKeyword = cxt.keyword.trim();
+    // cxt.setKeyword(trimedKeyword);
     if (event.key === 'Enter') {
-      navigate("/home/search/" + keyword);
+      navigate("/home");
       if (searchInputRef.current) {
         searchInputRef.current.blur();
       }
@@ -78,7 +75,7 @@ const SearchBar = () => {
         <SearchIcon/>
       </SearchIconWrapper>
       <StyledInputBase
-        value={keyword}
+        value={cxt.keyword}
         inputRef={searchInputRef}
         onChange={inPutChangeHandler}
         onKeyDown={enterSearchHandler}

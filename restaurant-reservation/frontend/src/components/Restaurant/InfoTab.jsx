@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import About from './About';
 import Menu from './Menu';
 import Box from '@mui/material/Box';
@@ -27,7 +27,7 @@ const theme = createTheme ( {
 })
 
 const InfoTab = ({restaurant}) => {
-  const [tab, setTab] = React.useState('About');
+  const [tab, setTab] = useState('About');
 
   const handleChange = (event, newValue) => {
     setTab(newValue);

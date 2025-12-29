@@ -1,5 +1,5 @@
-import { Fragment, useState, useEffect, useReducer } from 'react';
-import { useParams } from 'react-router';
+import { Fragment, useState, useEffect, useReducer, useContext } from 'react';
+import SearchContext from '../../store/search-context.jsx'
 import axios from "axios";
 import Cuisine from './Cuisine.jsx';
 import New from './New.jsx';
@@ -25,18 +25,19 @@ const Home = () => {
   const [restCuis, setRestCuis] = useState(null);
   const [restNew, setRestNew] = useState([]);
   const [searchState, dispatchSearch] = useReducer(searchReduccerFunc, initState);
-  const {keyword} = useParams();
+  const cxt = useContext(SearchContext);
 
   useEffect(() => {
-    if (keyword != undefined) {
-      axios.get(`http://localhost:8080/restaurant/search/${keyword}`)
+    if (cxt.keyword != '') {
+      const keywordTrimmed = cxt.keyword.trim();
+      axios.get('http://localhost:8080/restaurant/search', {params: {keyword: keywordTrimmed}})
       .then((response) => { dispatchSearch({ type: 'SEARCH_RESULT', val: response.data }) })
       .catch((e) => { dispatchSearch({ type: 'NO_RESULT', val: e.response.data }) });
     }
     else {
       dispatchSearch({ type: 'NO_SEARCH' })
     }
-  }, [keyword]);
+  }, [cxt.keyword]);
 
   useEffect(() => {
     axios.get("http://localhost:8080/restaurant/cuisine")

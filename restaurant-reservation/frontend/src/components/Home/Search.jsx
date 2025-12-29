@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import Box from '@mui/system/Box';
 import Grid from '@mui/material/Grid';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -12,7 +12,7 @@ const Search = ({restMatch}) => {
       <Typography sx={{ py:2, px: { xs: 2, sm: 5, md: 10, lg: 25, xl:40 }, fontSize:25 }}>Matching Results</Typography>
       <Grid container spacing={3} sx={{ py:2, px: { xs: 2, sm: 5, md: 10, lg: 25, xl:40 } }}>
         {restMatch.map((rt) => (
-          <Grid key={rt.rtId} item size={{ xs:12, sm:6, md:4, lg:4, xl:3 }}>
+          <Grid key={rt.rtId} size={{ xs:12, sm:6, md:4, lg:4, xl:3 }}>
             <Box sx={{ flex: "0 0 auto", width: 280 }}>
               <ImageListItem sx={{ borderRadius: 2, overflow: "hidden" }} component={Link} to={`/restaurant/${rt.rtId}`}>
                 <img

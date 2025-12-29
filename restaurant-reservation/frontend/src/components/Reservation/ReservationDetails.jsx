@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import toast from 'react-hot-toast';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
@@ -69,7 +70,7 @@ const ReservationDetails = ({reservation, attended, cancelReservation}) => {
 
   const cancelReservationHandler = () => {
     axios.put(`http://localhost:8080/reservation/cancel/${reservation.rsId}`)
-    .then((response) => { console.log(response.data); })
+    .then((response) => { toast.success(response.data); })
     .catch((e) => { console.log(e.response.data); });
     cancelReservation();
   }
